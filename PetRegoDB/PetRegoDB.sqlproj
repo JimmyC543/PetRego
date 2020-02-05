@@ -57,4 +57,9 @@
   <ItemGroup>
     <Folder Include="Properties" />
   </ItemGroup>
+  <ItemGroup>
+    <Build Include="LkpAnimalTypes.sql" />
+    <Build Include="tblOwners.sql" />
+    <Build Include="tblPets.sql" />
+  </ItemGroup>
 </Project>

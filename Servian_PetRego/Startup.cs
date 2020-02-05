@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Servian_PetRego.DAL;
+using Microsoft.EntityFrameworkCore;
 
 namespace Servian_PetRego
 {
@@ -26,6 +28,9 @@ namespace Servian_PetRego
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            //TODO: Add default command timeout?
+            services.AddDbContext<PetRegoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

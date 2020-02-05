@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servian_PetRego", "Servian_PetRego\Servian_PetRego.csproj", "{900EBF82-5DB9-4AC0-88C2-8530959A1E56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Servian_PetRego", "Servian_PetRego\Servian_PetRego.csproj", "{900EBF82-5DB9-4AC0-88C2-8530959A1E56}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PetRegoDB", "PetRegoDB\PetRegoDB.sqlproj", "{76AF0DD0-576D-4C57-860E-3EB6E3AA1257}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Servian_PetRegoTests", "Servian_PetRegoTests\Servian_PetRegoTests.csproj", "{A0A94E16-B5AE-4B3A-8231-39B6BDCB93C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{76AF0DD0-576D-4C57-860E-3EB6E3AA1257}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76AF0DD0-576D-4C57-860E-3EB6E3AA1257}.Release|Any CPU.Build.0 = Release|Any CPU
 		{76AF0DD0-576D-4C57-860E-3EB6E3AA1257}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{A0A94E16-B5AE-4B3A-8231-39B6BDCB93C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0A94E16-B5AE-4B3A-8231-39B6BDCB93C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0A94E16-B5AE-4B3A-8231-39B6BDCB93C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0A94E16-B5AE-4B3A-8231-39B6BDCB93C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,3 +1,7 @@
-Servian_PetRego/obj/*
 .vs/*
-PetRegoDB/obj/
+PetRegoDB/obj/*
+PetRegoDB/bin/*
+Servian_PetRego/obj/*
+Servian_PetRego/bin/*
+Servian_PetRegoTests/obj/*
+Servian_PetRegoTests/bin/*

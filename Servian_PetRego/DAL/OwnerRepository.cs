@@ -15,7 +15,7 @@ namespace Servian_PetRego.DAL
             _dbContext = context;
         }
 
-        public IEnumerable<tblPet> GetPetsByOwnerId()
+        public IEnumerable<tblPet> GetPetsByOwnerId(Guid id)
         {
             throw new NotImplementedException();
         }

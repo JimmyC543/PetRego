@@ -28,10 +28,11 @@ namespace Servian_PetRegoTests.DAL
             Assert.IsType<tblOwner>(result);
 
             // Assert.Equal/True weren't working so just check that all props match the expected value.
-            foreach (var prop in result.GetType().GetProperties())
-            {
-                Assert.Equal(prop.GetValue(result), prop.GetValue(result));
-            }
+            Assert.Equal(expected.Id, result.Id);
+            Assert.Equal(expected.FirstName, result.FirstName);
+            Assert.Equal(expected.LastName, result.LastName);
+            Assert.Equal(2, result.Pets.Count);//TODO: Assert that the pets are as expected...
+
         }
 
         [Theory]

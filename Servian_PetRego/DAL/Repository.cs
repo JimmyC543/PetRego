@@ -7,48 +7,48 @@ using System.Threading.Tasks;
 
 namespace Servian_PetRego.DAL
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly DbSet<T> _entities;
+        private readonly DbSet<TEntity> _entities;
 
         public Repository(DbContext dbContext)
         {
             //TODO: Null check?
-            _entities = dbContext.Set<T>();
+            _entities = dbContext.Set<TEntity>();
         }
 
-        public T GetById(Guid id)
+        public TEntity GetById(Guid id)
         {
             return _entities.Find(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<TEntity> GetAll()
         {
             return _entities.ToList();
         }
 
-        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
             return _entities.Where(predicate);
         }
 
-        public void Add(T entity)
+        public void Add(TEntity entity)
         {
             _entities.Add(entity);
         }
 
-        public void AddRange(IEnumerable<T> entities)
+        public void AddRange(IEnumerable<TEntity> entities)
         {
             _entities.AddRange(entities);
         }
 
-        public void Remove(T entity)
+        public void Remove(TEntity entity)
         {
             //TODO: Add logic to handle "not found" case
             _entities.Remove(entity);
         }
 
-        public void RemoveRange(IEnumerable<T> entities)
+        public void RemoveRange(IEnumerable<TEntity> entities)
         {
             //TODO: Add logic to handle "not found" case
             _entities.RemoveRange(entities);

@@ -1,6 +1,6 @@
 using System;
 
-namespace Servian_PetRego
+namespace PetRego
 {
     public class WeatherForecast
     {

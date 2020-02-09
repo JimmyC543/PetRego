@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Servian_PetRego.DAL.DataModels
+namespace PetRego.DAL.DataModels
 {
     //TODO: Consider making this an enum, if no other animal types are to be added?
     public class LkpAnimalType

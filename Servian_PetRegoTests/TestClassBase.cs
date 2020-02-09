@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Servian_PetRego.DAL;
-using Servian_PetRego.DAL.DataModels;
+using PetRego.DAL;
+using PetRego.DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Servian_PetRegoTests
+namespace PetRegoTests
 {
     public abstract class TestClassBase<T> where T : class
     {

@@ -10,10 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Servian_PetRego.DAL;
+using PetRego.DAL;
 using Microsoft.EntityFrameworkCore;
 
-namespace Servian_PetRego
+namespace PetRego
 {
     public class Startup
     {

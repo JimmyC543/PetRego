@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace Servian_PetRego.DAL
+namespace PetRego.DAL
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {

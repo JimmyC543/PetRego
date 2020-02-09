@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Servian_PetRegoTests
+namespace PetRegoTests
 {
     public class UnitTest1
     {

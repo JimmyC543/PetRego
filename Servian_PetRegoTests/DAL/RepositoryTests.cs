@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Moq;
-using Servian_PetRego.DAL;
-using Servian_PetRego.DAL.DataModels;
+using PetRego.DAL;
+using PetRego.DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace Servian_PetRegoTests.DAL
+namespace PetRegoTests.DAL
 {
     public class RepositoryTests : TestClassBase<tblPet>
     {

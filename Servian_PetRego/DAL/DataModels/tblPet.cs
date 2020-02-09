@@ -11,14 +11,17 @@ namespace PetRego.DAL.DataModels
     {
         public Guid Id { get; set; }
         
+        [Required]
         [StringLength(50)]
         public string Name { get; set; }
 
+        [Required]
         public int FKAnimalTypeId { get; set; }//private set?
         [ForeignKey(nameof(FKAnimalTypeId))]
         public LkpAnimalType AnimalType { get; set; }
 
-        public Guid FKOwnerId { get; set; }
+        
+        public Guid? FKOwnerId { get; set; }
         [ForeignKey(nameof(FKOwnerId))]
         public tblOwner Owner { get; set; }
     }

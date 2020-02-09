@@ -15,9 +15,10 @@ namespace Servian_PetRego.DAL
             _dbContext = context;
         }
 
+        //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
         public IEnumerable<tblPet> GetPetsByOwnerId(Guid id)
         {
-            throw new NotImplementedException();
+            return _dbContext.Owners.FirstOrDefault(owner => owner.Id == id)?.Pets ?? new List<tblPet>();
         }
     }
 }

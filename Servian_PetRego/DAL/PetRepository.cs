@@ -14,6 +14,7 @@ namespace Servian_PetRego.DAL
             _dbContext = context;
         }
 
+        //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
         public tblOwner GetOwnerByPetId(Guid petId)
         {
             return _dbContext.Pets.FirstOrDefault(pet => pet.Id == petId)?.Owner;

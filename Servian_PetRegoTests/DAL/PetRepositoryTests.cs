@@ -2,6 +2,7 @@
 using Servian_PetRego.DAL.DataModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -11,19 +12,19 @@ namespace Servian_PetRegoTests.DAL
     {
 
         [Theory]
-        [InlineData("b66b7d7b-62b1-4feb-a128-058aa5f99a3f", "a8eab20c-55bd-4526-a162-2ff8959b8862", "Tony", "Jones")]
-        public void GetOwnerByPetId_ShouldPass_WhenIdExists(string petId, string ownerId, string firstName, string lastName)
+        [InlineData("b66b7d7b-62b1-4feb-a128-058aa5f99a3f", "a8eab20c-55bd-4526-a162-2ff8959b8862", "Tony", "Jones", 2)]
+        public void GetOwnerByPetId_ShouldPass_WhenIdExists(string petId, string ownerId, string firstName, string lastName, int petCount)
         {
             //Arrange
             Guid petGuid = Guid.Parse(petId);
-            Guid ownerGuid = Guid.Parse(ownerId);
-            tblOwner expected = new tblOwner { Id = ownerGuid, FirstName = firstName, LastName = lastName };
+            var expected = new tblOwner { Id = Guid.Parse(ownerId), FirstName = firstName, LastName = lastName };
             IPetRepository repo = new PetRepository(_context);
 
             //Act
             var result = repo.GetOwnerByPetId(petGuid);
 
             //Assert
+            Assert.True(expected != null);
             Assert.True(result != null);
             Assert.IsType<tblOwner>(result);
 
@@ -31,8 +32,7 @@ namespace Servian_PetRegoTests.DAL
             Assert.Equal(expected.Id, result.Id);
             Assert.Equal(expected.FirstName, result.FirstName);
             Assert.Equal(expected.LastName, result.LastName);
-            Assert.Equal(2, result.Pets.Count);//TODO: Assert that the pets are as expected...
-
+            Assert.Equal(petCount, result.Pets.Count);//TODO: Assert that the pets are as expected...
         }
 
         [Theory]

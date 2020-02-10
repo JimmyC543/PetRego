@@ -18,6 +18,6 @@ namespace PetRego.DAL.DataModels
         [StringLength(50)]
         public string LastName { get; set; }
 
-        public ICollection<tblPet> Pets { get; private set; }
+        public ICollection<tblPet> Pets { get; private set; } = new List<tblPet>();
     }
 }

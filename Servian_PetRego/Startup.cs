@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PetRego.DAL;
 using Microsoft.EntityFrameworkCore;
+using PetRego.BLL;
 
 namespace PetRego
 {
@@ -31,6 +32,9 @@ namespace PetRego
 
             //TODO: Add default command timeout?
             services.AddDbContext<PetRegoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IOwnerService, OwnerService>();
+            services.AddSingleton<IOwnerRepository, OwnerRepository>();
+            services.AddSingleton<IPetRepository, PetRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

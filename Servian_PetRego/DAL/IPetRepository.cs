@@ -9,6 +9,6 @@ namespace PetRego.DAL
     public interface IPetRepository : IRepository<tblPet>
     {
         //TODO: Move this into the Business Layer
-        public tblOwner GetOwnerByPetId(Guid petId);
+        public Task<tblOwner> GetOwnerByPetIdAsync(Guid petId);
     }
 }

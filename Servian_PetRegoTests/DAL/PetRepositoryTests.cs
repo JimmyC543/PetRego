@@ -21,7 +21,7 @@ namespace PetRegoTests.DAL
             IPetRepository repo = new PetRepository(_context);
 
             //Act
-            var result = repo.GetOwnerByPetId(petGuid);
+            var result = repo.GetOwnerByPetIdAsync(petGuid).Result;
 
             //Assert
             Assert.True(expected != null);
@@ -44,7 +44,7 @@ namespace PetRegoTests.DAL
             IPetRepository repo = new PetRepository(_context);
 
             //Act
-            var result = repo.GetOwnerByPetId(petGuid);
+            var result = repo.GetOwnerByPetIdAsync(petGuid).Result;
 
             //Assert
             Assert.True(result == null);

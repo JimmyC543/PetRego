@@ -8,6 +8,6 @@ namespace PetRego.DAL
 {
     public interface IOwnerRepository : IRepository<tblOwner>
     {
-        public IEnumerable<tblPet> GetPetsByOwnerId(Guid id);
+        public Task<IEnumerable<tblPet>> GetPetsByOwnerIdAsync(Guid id);
     }
 }

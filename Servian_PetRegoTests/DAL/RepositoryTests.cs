@@ -28,7 +28,7 @@ namespace PetRegoTests.DAL
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act
-            var result = repo.GetAll();
+            var result = repo.GetAllAsync().Result;
 
             //Assert
             Assert.Equal(3, result.Count());
@@ -51,7 +51,7 @@ namespace PetRegoTests.DAL
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act
-            var result = repo.GetById(guid);
+            var result = repo.GetByIdAsync(guid).Result;
 
             //Assert
             Assert.True(result != null);
@@ -72,20 +72,23 @@ namespace PetRegoTests.DAL
         {
             //Arrange
             Guid guid = Guid.Parse(id);
-            tblPet expected = new tblPet { Id = guid, Name = expectedName };
+
+            var expected = GenerateTblPets().FirstOrDefault(entity => entity.Name == expectedName);
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act
-            var result = repo.Find(entity => entity.Name == expectedName);
+            var result = repo.FindAsync(entity => entity.Name == expectedName).Result;
 
             //Assert
             Assert.True(result != null);
             Assert.IsAssignableFrom<IEnumerable<tblPet>>(result);
 
-            // Assert.Equal/True weren't working so just check that all props match the expected value.
-            foreach(var prop in result.GetType().GetProperties())
+            foreach(var pet in result)
             {
-                Assert.Equal(prop.GetValue(result), prop.GetValue(result));
+                Assert.Equal(expected.Id, pet.Id);
+                Assert.Equal(expected.Name, pet.Name);
+                Assert.Equal(expected.FKAnimalTypeId, pet.FKAnimalTypeId);
+                Assert.Equal(expected.FKOwnerId, pet.FKOwnerId);
             }
         }
 

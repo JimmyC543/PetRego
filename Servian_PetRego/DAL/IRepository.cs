@@ -8,11 +8,11 @@ namespace PetRego.DAL
 {
     public interface IRepository<T> where T : class
     {
-        public T GetById(Guid id);
-        public IEnumerable<T> GetAll();
+        public Task<T> GetByIdAsync(Guid id);
+        public Task<IEnumerable<T>> GetAllAsync();
+        public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         public void Add(T entity);
         public void AddRange(IEnumerable<T> entities);
-        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
         public void Remove(T entity);
         public void RemoveRange(IEnumerable<T> entities);
     }

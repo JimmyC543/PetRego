@@ -22,7 +22,7 @@ namespace PetRegoTests.DAL
             IOwnerRepository repo = new OwnerRepository(_context);
 
             //Act
-            var result = repo.GetPetsByOwnerId(petGuid);
+            var result = repo.GetPetsByOwnerIdAsync(petGuid).Result;
 
             //Assert
             Assert.True(result != null);
@@ -49,7 +49,7 @@ namespace PetRegoTests.DAL
             IOwnerRepository repo = new OwnerRepository(_context);
 
             //Act
-            var result = repo.GetPetsByOwnerId(ownerGuid);
+            var result = repo.GetPetsByOwnerIdAsync(ownerGuid).Result;
 
             //Assert
             Assert.True(result != null);

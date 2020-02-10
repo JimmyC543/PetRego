@@ -17,19 +17,19 @@ namespace PetRego.DAL
             _entities = dbContext.Set<TEntity>();
         }
 
-        public TEntity GetById(Guid id)
+        public async Task<TEntity> GetByIdAsync(Guid id)
         {
-            return _entities.Find(id);
+            return await _entities.FindAsync(id);
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return _entities.ToList();
+            return await _entities.ToListAsync().ConfigureAwait(false);
         }
 
-        public IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return _entities.Where(predicate);
+            return await _entities.Where(predicate).ToListAsync().ConfigureAwait(false);
         }
 
         public void Add(TEntity entity)

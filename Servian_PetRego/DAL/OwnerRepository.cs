@@ -1,4 +1,5 @@
-﻿using PetRego.DAL.DataModels;
+﻿using Microsoft.EntityFrameworkCore;
+using PetRego.DAL.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,9 @@ namespace PetRego.DAL
         }
 
         //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
-        public IEnumerable<tblPet> GetPetsByOwnerId(Guid id)
+        public async Task<IEnumerable<tblPet>> GetPetsByOwnerIdAsync(Guid id)
         {
-            return _dbContext.Owners.FirstOrDefault(owner => owner.Id == id)?.Pets ?? new List<tblPet>();
+            return (await _dbContext.Owners.FirstOrDefaultAsync(owner => owner.Id == id).ConfigureAwait(false))?.Pets ?? new List<tblPet>();
         }
     }
 }

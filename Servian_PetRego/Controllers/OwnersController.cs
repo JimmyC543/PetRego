@@ -5,63 +5,79 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PetRego.BLL;
 using PetRego.DAL;
 using PetRego.DAL.DataModels;
 
 namespace PetRego.Controllers
 {
-    [Route("api/[controller]")]
+    //TODO: Add versioning!
     [ApiController]
+    [Route("api/[controller]")]
     public class OwnersController : ControllerBase
     {
-        private readonly PetRegoDbContext _context;
+        //private readonly PetRegoDbContext _context;
+        private readonly IOwnerService _ownerService;
 
-        public OwnersController(PetRegoDbContext context)
+        public OwnersController(/*PetRegoDbContext context,*/ IOwnerService ownerService)
         {
-            _context = context;
+            //_context = context;
+            _ownerService = ownerService;
         }
 
         // GET: api/Owners
         [HttpGet]
         public async Task<ActionResult<IEnumerable<tblOwner>>> GetOwners()
         {
-            return await _context.Owners.ToListAsync();
+            var owners = await _ownerService.GetAllAsync().ConfigureAwait(false);
+            return Ok(owners);
+            //return await _context.Owners.ToListAsync();
         }
 
-        // GET: api/Owners/5
+        // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
         [HttpGet("{id}")]
-        public async Task<ActionResult<tblOwner>> GettblOwner(Guid id)
+        public async Task<ActionResult<tblOwner>> GetOwner(Guid id)
         {
-            var tblOwner = await _context.Owners.FindAsync(id);
+            //var owner = await _context.Owners.FindAsync(id);
+            var owner = await _ownerService.GetByIdAsync(id).ConfigureAwait(false);
 
-            if (tblOwner == null)
+            if (owner == null)
             {
                 return NotFound();
             }
 
-            return tblOwner;
+            return Ok(owner);
+        }
+
+        // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862/Pets
+        [HttpGet("{id}/pets")]
+        public async Task<ActionResult<tblPet>> GetPetsByOwnerId(Guid id)
+        {
+            var pets = await _ownerService.GetPetsAsync(id).ConfigureAwait(false);
+
+            return Ok(pets);
         }
 
         // PUT: api/Owners/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PuttblOwner(Guid id, tblOwner tblOwner)
+        public async Task<IActionResult> PutOwner(Guid id, tblOwner owner)
         {
-            if (id != tblOwner.Id)
+            if (owner == null || id != owner.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(tblOwner).State = EntityState.Modified;
+            //_context.Entry(owner).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!tblOwnerExists(id))
+                if (!OwnerExists(id))
                 {
                     return NotFound();
                 }
@@ -78,33 +94,34 @@ namespace PetRego.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<tblOwner>> PosttblOwner(tblOwner tblOwner)
+        public async Task<ActionResult<tblOwner>> PostOwner(tblOwner owner)
         {
-            _context.Owners.Add(tblOwner);
-            await _context.SaveChangesAsync();
+            //_context.Owners.Add(owner);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GettblOwner", new { id = tblOwner.Id }, tblOwner);
+            return CreatedAtAction("GettblOwner", new { id = owner.Id }, owner);
         }
 
         // DELETE: api/Owners/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<tblOwner>> DeletetblOwner(Guid id)
+        public async Task<ActionResult<tblOwner>> DeleteOwner(Guid id)
         {
-            var tblOwner = await _context.Owners.FindAsync(id);
-            if (tblOwner == null)
-            {
-                return NotFound();
-            }
+            //var owner = await _ownerService.GetByIdAsync(id).ConfigureAwait(false);
+            //if (owner == null)
+            //{
+            //    return NotFound();
+            //}
 
-            _context.Owners.Remove(tblOwner);
-            await _context.SaveChangesAsync();
+            _ownerService.Remove(id);
+            //await _context.SaveChangesAsync();
 
-            return tblOwner;
+            //return owner;
+            return Ok();
         }
 
-        private bool tblOwnerExists(Guid id)
+        private bool OwnerExists(Guid id)
         {
-            return _context.Owners.Any(e => e.Id == id);
+            return _ownerService.GetByIdAsync(id) != null;
         }
     }
 }

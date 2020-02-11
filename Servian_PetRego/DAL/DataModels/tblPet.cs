@@ -9,6 +9,7 @@ namespace PetRego.DAL.DataModels
 {
     public class tblPet
     {
+        [Key]
         public Guid Id { get; set; }
         
         [Required]

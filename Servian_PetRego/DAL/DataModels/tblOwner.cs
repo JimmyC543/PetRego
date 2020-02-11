@@ -8,6 +8,7 @@ namespace PetRego.DAL.DataModels
 {
     public class tblOwner
     {
+        [Key]
         public Guid Id { get; set; }
 
         [Required]

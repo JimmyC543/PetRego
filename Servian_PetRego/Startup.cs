@@ -33,8 +33,10 @@ namespace PetRego
             //TODO: Add default command timeout?
             services.AddDbContext<PetRegoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IOwnerService, OwnerService>();
-            services.AddSingleton<IOwnerRepository, OwnerRepository>();
-            services.AddSingleton<IPetRepository, PetRepository>();
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
+            services.AddScoped<IPetRepository, PetRepository>();
+
+            //services.AddApiVersioning();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -405,5 +405,32 @@ namespace PetRegoTests.BLL
         }
 
         #endregion
+
+        #region Update tests
+
+        [Theory]
+        [InlineData("09ae6e94-3a0d-416c-b28b-7b1e0a710493", "Michael", "Jordan", "Clark", "Kent")]
+        public void Update_ShouldSucceed_WithMatchingEntity(string ownerId1, string firstName1, string lastName1, string firstName2, string lastName2)
+        {
+            //Arrange
+            Guid ownerGuid1 = Guid.Parse(ownerId1);
+
+            tblOwner owner1 = new tblOwner() { Id = ownerGuid1, FirstName = firstName1, LastName = lastName1 };
+            tblOwner matchedEntity = new tblOwner { Id = ownerGuid1, FirstName = firstName1, LastName = lastName1 };
+
+            _mockOwnerRepository.Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(matchedEntity);
+
+            //Act
+            var result = _service.Update(owner1);
+
+            //Assert
+            _mockOwnerRepository.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once());
+            //_mockPetRepository.Verify(x => x.FindAsync(It.IsAny<Expression<Func<tblPet, bool>>>()), Times.Once());
+            //_mockPetRepository.Verify(x => x.Update(It.IsAny<IEnumerable<tblPet>>()));//TODO: Update all pets too?
+            _mockOwnerRepository.Verify(x => x.Update(owner1), Times.Once());
+            Assert.True(result.IsCompletedSuccessfully);
+        }
+        #endregion
     }
 }

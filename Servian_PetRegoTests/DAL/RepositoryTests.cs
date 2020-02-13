@@ -16,8 +16,9 @@ namespace PetRegoTests.DAL
         public void Constructor_Test()
         {
             Mock<DbContext> mockContext = new Mock<DbContext>();
-            Repository<tblPet> repo = new Repository<tblPet>(mockContext.Object);
-            Assert.True(repo != null);
+            Repository<tblPet> petsRepo = new Repository<tblPet>(mockContext.Object);
+            Repository<tblOwner> ownersRepo = new Repository<tblOwner>(mockContext.Object);
+            Assert.True(petsRepo != null);
         }
 
         [Fact]
@@ -43,7 +44,7 @@ namespace PetRegoTests.DAL
         [InlineData("b66b7d7b-62b1-4feb-a128-058aa5f99a3f", "Mittens")]
         [InlineData("4b34cc1d-737f-4bc0-a6c4-9a7b1c3541b0", "Spot")]
         [InlineData("1390599d-3e45-48e0-87ba-a09f578b4f7b", "Rex")]
-        public void GetById_Test(string id, string expectedName)
+        public void GetById_Test_Pets(string id, string expectedName)
         {
             //Arrange
             Guid guid = Guid.Parse(id);
@@ -62,6 +63,28 @@ namespace PetRegoTests.DAL
             {
                 Assert.Equal(prop.GetValue(result), prop.GetValue(result));
             }
+        }
+        [Theory]
+        [InlineData("a8eab20c-55bd-4526-a162-2ff8959b8862", "Tony", "Jones")]
+        public void GetById_Test_Owners(string id, string firstName, string lastName)
+        {
+            //Arrange
+            Guid guid = Guid.Parse(id);
+            tblOwner expected = new tblOwner { Id = guid, FirstName = firstName, LastName = lastName };
+            Repository<tblOwner> repo = new Repository<tblOwner>(_context);
+
+            //Act
+            var result = repo.GetByIdAsync(guid).Result;
+
+            //Assert
+            Assert.True(result != null);
+            Assert.IsType<tblOwner>(result);
+
+            Assert.Equal(guid, result.Id);
+            Assert.Equal(firstName, result.FirstName);
+            Assert.Equal(lastName, result.LastName);
+            Assert.Equal($"{firstName} {lastName}", result.FullName);//More of an integration test including the tblOwner entity model
+            Assert.Equal(2, result.Pets.Count());
         }
 
         [Theory]

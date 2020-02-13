@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,6 +20,15 @@ namespace PetRego.DAL.DataModels
         [StringLength(50)]
         public string LastName { get; set; }
 
-        public ICollection<tblPet> Pets { get; private set; } = new List<tblPet>();
+        public List<tblPet> Pets { get; private set; } = new List<tblPet>();
+
+        [NotMapped]
+        public string FullName
+        {
+            get
+            {
+                return $"{FirstName} {LastName}";
+            }
+        }
     }
 }

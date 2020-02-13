@@ -1,5 +1,6 @@
 ﻿using PetRego.DAL;
 using PetRego.DAL.DataModels;
+using PetRego.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace PetRego.BLL
             _petRepository = petRepository;
         }
 
-        public async Task Add(tblOwner entity)
+        public async Task<tblOwner> Add(tblOwner entity)
         {
             if (entity == null)
             {
@@ -30,7 +31,7 @@ namespace PetRego.BLL
                 throw new InvalidOperationException("Owner already exists.");
             }
 
-            _ownerRepository.Add(entity);
+            return await _ownerRepository.Add(entity);
         }
 
         public async Task AddRange(IEnumerable<tblOwner> entities)
@@ -63,6 +64,16 @@ namespace PetRego.BLL
             return await _ownerRepository.GetPetsByOwnerIdAsync(ownerId).ConfigureAwait(false);
         }
 
+        public async Task Update(tblOwner owner)
+        {
+            if (await _ownerRepository.GetByIdAsync(owner.Id) == null)
+            {
+                throw new EntityNotFoundException($"Could not find owner with id {owner.Id}");
+            };
+
+            _ownerRepository.Update(owner);
+        }
+
         public async Task Remove(Guid id)
         {
             if (id == null)
@@ -90,7 +101,7 @@ namespace PetRego.BLL
 
             if (entitiesToRemove.Count() != ids.Count())
             {
-                throw new ArgumentException("Can't remove all of the owners; at least one does not exist.");
+                throw new EntityNotFoundException("Can't remove all of the owners; at least one does not exist.");
             }
 
             //TODO: Wrap in a try/catch and rollback if either step fails.

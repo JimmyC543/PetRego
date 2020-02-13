@@ -30,8 +30,8 @@ namespace PetRego.DAL
         public async Task<IEnumerable<tblPet>> GetPetsByOwnerIdAsync(Guid id)
         {
             return (await _dbContext.Owners
-                .Include(nameof(tblOwner.Pets))
-                .Include(nameof(tblPet.AnimalType))
+                .Include(o => o.Pets)
+                .ThenInclude(p => p.AnimalType)
                 .FirstOrDefaultAsync(owner => owner.Id == id)
                 .ConfigureAwait(false))
                 ?.Pets ?? new List<tblPet>();

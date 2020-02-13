@@ -14,7 +14,7 @@ namespace PetRego.DAL
         public Task<T> Add(T entity);
         public Task AddRange(IEnumerable<T> entities);
         public void Update(T entity);
-        public void Remove(T entity);
-        public void RemoveRange(IEnumerable<T> entities);
+        public Task<T> Remove(Guid id);
+        public Task RemoveRange(IEnumerable<T> entities);
     }
 }

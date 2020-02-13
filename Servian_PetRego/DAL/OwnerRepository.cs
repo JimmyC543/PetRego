@@ -25,6 +25,14 @@ namespace PetRego.DAL
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
+        public override async Task<tblOwner> GetByIdAsync(Guid id)
+        {
+            return await _dbContext.Owners
+                .Include(o => o.Pets)
+                .ThenInclude(p => p.AnimalType)
+                .FirstOrDefaultAsync(o => o.Id == id)
+                .ConfigureAwait(false);
+        }
 
         //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
         public async Task<IEnumerable<tblPet>> GetPetsByOwnerIdAsync(Guid id)
@@ -35,6 +43,20 @@ namespace PetRego.DAL
                 .FirstOrDefaultAsync(owner => owner.Id == id)
                 .ConfigureAwait(false))
                 ?.Pets ?? new List<tblPet>();
+        }
+        public override async Task<tblOwner> Remove(Guid id)
+        {
+            var entity = await _dbContext.Set<tblOwner>().FindAsync(id);
+            if (entity == null)
+            {
+                return null;
+            }
+            await _dbContext.Entry(entity).Collection(o => o.Pets).LoadAsync();
+            _dbContext.Set<tblPet>().RemoveRange(entity.Pets);
+            _dbContext.Set<tblOwner>().Remove(entity);
+            await _dbContext.SaveChangesAsync();
+
+            return entity;
         }
     }
 }

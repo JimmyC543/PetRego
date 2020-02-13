@@ -21,7 +21,7 @@ namespace PetRego.BLL
 
         //TODO: "Get food for pet" method
 
-        public async Task Add(tblPet entity)
+        public async Task<tblPet> Add(tblPet entity)
         {
             if (entity == null)
             {
@@ -36,7 +36,9 @@ namespace PetRego.BLL
                 throw new InvalidOperationException("Unable to add pet for owner that doesn't exist.");
             }
 
-            _petRepository.Add(entity);
+            var createdEntity = await _petRepository.Add(entity);
+
+            return await _petRepository.GetByIdAsync(createdEntity.Id);
         }
 
         public async Task AddRange(IEnumerable<tblPet> entities)
@@ -68,16 +70,14 @@ namespace PetRego.BLL
         {
             return await _petRepository.GetOwnerByPetIdAsync(petId).ConfigureAwait(false);
         }
-
-        public async Task Remove(Guid id)
+        public async Task Update(tblPet pet)
         {
-            var entityToRemove = await _petRepository.GetByIdAsync(id).ConfigureAwait(false);
-            if (entityToRemove == null)
-            {
-                throw new InvalidOperationException("Cannot remove pet, as it doesn't exist.");
-            }
+            _petRepository.Update(pet);
+        }
 
-            _petRepository.Remove(entityToRemove);
+        public async Task<tblPet> Remove(Guid id)
+        {
+            return await _petRepository.Remove(id);
         }
 
         public async Task RemoveRange(IEnumerable<Guid> ids)

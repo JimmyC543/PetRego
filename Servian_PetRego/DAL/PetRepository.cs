@@ -31,5 +31,13 @@ namespace PetRego.DAL
                 .Include(nameof(tblPet.AnimalType))
                 .FirstOrDefaultAsync(pet => pet.Id == petId);
         }
+
+        public async override Task<IEnumerable<tblPet>> GetAllAsync()
+        {
+            return await _dbContext.Pets
+                .Include(nameof(tblPet.Owner))
+                .Include(nameof(tblPet.AnimalType))
+                .ToListAsync();
+        }
     }
 }

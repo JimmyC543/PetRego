@@ -13,9 +13,10 @@ namespace PetRego.BLL
         public Task<IEnumerable<tblPet>> GetAllAsync();
         public Task<tblOwner> GetOwnerAsync(Guid petId);
         public Task<IEnumerable<tblPet>> FindAsync(Expression<Func<tblPet, bool>> predicate);
-        public Task Add(tblPet entity);
+        public Task<tblPet> Add(tblPet entity);
         public Task AddRange(IEnumerable<tblPet> entities);
-        public Task Remove(Guid id);
+        public Task Update(tblPet entity);
+        public Task<tblPet> Remove(Guid id);
         public Task RemoveRange(IEnumerable<Guid> ids);
     }
 }

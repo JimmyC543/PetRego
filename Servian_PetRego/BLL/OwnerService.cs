@@ -74,20 +74,14 @@ namespace PetRego.BLL
             _ownerRepository.Update(owner);
         }
 
-        public async Task Remove(Guid id)
+        public async Task<tblOwner> Remove(Guid id)
         {
             if (id == null)
             {
                 throw new ArgumentNullException("Cannot remove blank entity");
             }
-            var entityToRemove = await _ownerRepository.GetByIdAsync(id).ConfigureAwait(false);
-            if (entityToRemove == null)
-            {
-                throw new EntityNotFoundException("Cannot remove owner, as it doesn't exist.");
-            }
 
-            _petRepository.RemoveRange(entityToRemove.Pets);
-            _ownerRepository.Remove(entityToRemove);
+            return await _ownerRepository.Remove(id);
         }
 
         public async Task RemoveRange(IEnumerable<Guid> ids)

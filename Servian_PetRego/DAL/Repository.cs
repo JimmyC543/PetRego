@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PetRego.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,6 @@ namespace PetRego.DAL
             }
 
             _dbContext = dbContext;
-            //_entities = dbContext.Set<TEntity>();
         }
 
         public virtual async Task<TEntity> GetByIdAsync(Guid id)
@@ -58,18 +58,24 @@ namespace PetRego.DAL
             _dbContext.SaveChanges();
         }
 
-        public void Remove(TEntity entity)
+        public virtual async Task<TEntity> Remove(Guid id)
         {
             //TODO: Add logic to handle "not found" case
+            TEntity entity = await _dbContext.Set<TEntity>().FindAsync(id);
+            if (entity == null)
+            {
+                throw new EntityNotFoundException("Cannot remove record, as it doesn't exist.");
+            }
             _dbContext.Set<TEntity>().Remove(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
+            return entity;
         }
 
-        public void RemoveRange(IEnumerable<TEntity> entities)
+        public async Task RemoveRange(IEnumerable<TEntity> entities)
         {
             //TODO: Add logic to handle "not found" case
             _dbContext.Set<TEntity>().RemoveRange(entities);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

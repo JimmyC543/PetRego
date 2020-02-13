@@ -16,7 +16,7 @@ namespace PetRego.BLL
         public Task<tblOwner> Add(tblOwner entity);
         public Task AddRange(IEnumerable<tblOwner> entities);
         public Task Update(tblOwner entity);
-        public Task Remove(Guid id);
+        public Task<tblOwner> Remove(Guid id);
         public Task RemoveRange(IEnumerable<Guid> ids);
     }
 }

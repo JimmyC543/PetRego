@@ -174,14 +174,14 @@ namespace PetRegoTests.DAL
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act
-            repo.Remove(petToRemove);
+            repo.Remove(petToRemove.Id);
             _context.SaveChanges();
 
             //Assert
             Assert.DoesNotContain(petToRemove, _context.Set<tblPet>());
         }
         [Theory]
-        [InlineData("13437248-2d41-4599-ad00-21b7a9fa3f6b", "Muffin")]
+        [InlineData("13437248-2d41-4599-ad00-000000000000", "Muffin")]
         public void Remove_Test_ShouldFail_WhenEntityDoesNotExist(string id, string name)
         {
             //Arange
@@ -190,7 +190,7 @@ namespace PetRegoTests.DAL
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act/Assert
-            Assert.Throws<DbUpdateConcurrencyException>(() => { repo.Remove(fakePet); });
+            Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => repo.Remove(fakePet.Id));
         }
 
         [Fact]//TODO: convert to a theory and test with several combinations

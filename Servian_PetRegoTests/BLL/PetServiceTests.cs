@@ -146,19 +146,24 @@ namespace PetRegoTests.BLL
             Guid wrongGuid = Guid.Parse("c3b922ac-a2bf-4b75-a9dc-5b3c44798264");
             Guid petGuid = Guid.Parse(petId);
             Guid ownerGuid = Guid.Parse(ownerId);
-            _mockPetRepository.Setup(x => x.GetByIdAsync(petGuid))
-                .ReturnsAsync((tblPet)null);
+            tblPet pet = new tblPet() { Id = petGuid, Name = name, FKAnimalTypeId = fkAnimalTypeId, FKOwnerId = ownerGuid };
+
+            _mockPetRepository.SetupSequence(x => x.GetByIdAsync(petGuid))
+                .ReturnsAsync((tblPet)null)
+                .ReturnsAsync(pet);
             _mockOwnerRepository.Setup(x => x.GetByIdAsync(ownerGuid))
                 .ReturnsAsync(new tblOwner { Id = ownerGuid, FirstName = "Joe", LastName = "Bob" });
+            _mockPetRepository.Setup(x => x.Add(pet))
+                .ReturnsAsync(pet);
 
-            tblPet pet = new tblPet() { Id = petGuid, Name = name, FKAnimalTypeId = fkAnimalTypeId, FKOwnerId = ownerGuid };
             //Act
             var result = _service.Add(pet);
 
             //Assert
-            _mockPetRepository.Verify(x => x.GetByIdAsync(petGuid), Times.Once());
+            //_mockPetRepository.Verify(x => x.GetByIdAsync(petGuid), Times.Once());
             _mockOwnerRepository.Verify(x => x.GetByIdAsync(ownerGuid), Times.Once());
             _mockPetRepository.Verify(x => x.Add(pet), Times.Once());
+            _mockPetRepository.Verify(x => x.GetByIdAsync(petGuid), Times.Exactly(2));
             Assert.True(result.IsCompletedSuccessfully);
         }
         [Theory]
@@ -316,8 +321,7 @@ namespace PetRegoTests.BLL
             var result = _service.Remove(petGuid);
 
             //Assert
-            _mockPetRepository.Verify(x => x.GetByIdAsync(petGuid), Times.Once());
-            _mockPetRepository.Verify(x => x.Remove(existingPet), Times.Once());
+            _mockPetRepository.Verify(x => x.Remove(petGuid), Times.Once());
             Assert.True(result.IsCompletedSuccessfully);
         }
 
@@ -336,10 +340,8 @@ namespace PetRegoTests.BLL
             var task = _service.Remove(guid);
 
             //Assert
+            _mockPetRepository.Verify(x => x.Remove(It.IsAny<Guid>()), Times.Once());
             Assert.ThrowsAnyAsync<InvalidOperationException>(() => task);
-            _mockPetRepository.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once());
-            _mockPetRepository.Verify(x => x.Remove(It.IsAny<tblPet>()), Times.Never());
-            Assert.False(task.IsCompletedSuccessfully);
         }
 
         #endregion

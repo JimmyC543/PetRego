@@ -83,7 +83,7 @@ namespace PetRego.BLL
             var entityToRemove = await _ownerRepository.GetByIdAsync(id).ConfigureAwait(false);
             if (entityToRemove == null)
             {
-                throw new InvalidOperationException("Cannot remove owner, as it doesn't exist.");
+                throw new EntityNotFoundException("Cannot remove owner, as it doesn't exist.");
             }
 
             _petRepository.RemoveRange(entityToRemove.Pets);

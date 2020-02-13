@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using PetRego.BLL;
 using PetRego.DAL;
 using PetRego.DAL.DataModels;
+using PetRego.Models;
+using PetRego.Utilities;
 
 namespace PetRego.Controllers
 {
@@ -16,29 +18,69 @@ namespace PetRego.Controllers
     [Route("api/[controller]")]
     public class OwnersController : ControllerBase
     {
-        //private readonly PetRegoDbContext _context;
         private readonly IOwnerService _ownerService;
 
-        public OwnersController(/*PetRegoDbContext context,*/ IOwnerService ownerService)
+        public OwnersController(IOwnerService ownerService)
         {
-            //_context = context;
             _ownerService = ownerService;
         }
 
         // GET: api/Owners
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<tblOwner>>> GetOwners()
+        [ApiVersion("1.0")]
+        public async Task<ActionResult<IEnumerable<OwnerVM>>> GetOwners()
         {
             var owners = await _ownerService.GetAllAsync().ConfigureAwait(false);
-            return Ok(owners);
-            //return await _context.Owners.ToListAsync();
+
+            //TODO: Add mapper classes to perform these sorts of conversions
+            return Ok(owners.Select(o => new OwnerVM
+            {
+                OwnerId = o.Id,
+                FirstName = o.FirstName,
+                LastName = o.LastName,
+                Pets = o.Pets.Select(p => new PetVM 
+                { 
+                    PetId = p.Id,
+                    Name = p.Name,
+                    AnimalTypeId = p.FKAnimalTypeId,
+                    AnimalType = p.AnimalType.AnimalType,
+                    OwnerId = p.FKOwnerId,
+                    OwnersName = p.Owner.FullName
+                })
+
+            }));
+        }
+        [HttpGet]
+        [ApiVersion("2.0")] //Use "X-Version": "2.0" in request header
+        public async Task<ActionResult<IEnumerable<OwnerVM_v2_0>>> GetOwners_v2_0()
+        {
+            var owners = await _ownerService.GetAllAsync().ConfigureAwait(false);
+
+            //TODO: Add mapper classes to perform these sorts of conversions
+            return Ok(owners.Select(o => new OwnerVM_v2_0
+            {
+                OwnerId = o.Id,
+                FirstName = o.FirstName,
+                LastName = o.LastName,
+                Pets = o.Pets.Select(p => new PetVM_v2_0 
+                { 
+                    PetId = p.Id,
+                    Name = p.Name,
+                    AnimalTypeId = p.FKAnimalTypeId,
+                    AnimalType = p.AnimalType.AnimalType,
+                    FoodSource = p.AnimalType.FoodSource,
+                    OwnerId = p.FKOwnerId,
+                    OwnersName = p.Owner.FullName
+                })
+
+            }));
         }
 
         // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
         [HttpGet("{id}")]
-        public async Task<ActionResult<tblOwner>> GetOwner(Guid id)
+        [ApiVersion("1.0")]
+        public async Task<ActionResult<OwnerVM>> GetOwner(Guid id)
         {
-            //var owner = await _context.Owners.FindAsync(id);
             var owner = await _ownerService.GetByIdAsync(id).ConfigureAwait(false);
 
             if (owner == null)
@@ -46,34 +88,99 @@ namespace PetRego.Controllers
                 return NotFound();
             }
 
-            return Ok(owner);
+            return Ok(new OwnerVM
+            {
+                OwnerId = owner.Id,
+                FirstName = owner.FirstName,
+                LastName = owner.LastName,
+                Pets = owner.Pets.Select(p => new PetVM
+                {
+                    PetId = p.Id,
+                    Name = p.Name,
+                    AnimalTypeId = p.FKAnimalTypeId,
+                    AnimalType = p.AnimalType.AnimalType,
+                    OwnerId = p.FKOwnerId,
+                    OwnersName = p.Owner.FullName
+                })
+
+            });
+        }
+        // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
+        [HttpGet("{id}")]
+        [ApiVersion("2.0")]
+        public async Task<ActionResult<OwnerVM_v2_0>> GetOwner_v2_0(Guid id)
+        {
+            var owner = await _ownerService.GetByIdAsync(id).ConfigureAwait(false);
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(new OwnerVM_v2_0
+            {
+                OwnerId = owner.Id,
+                FirstName = owner.FirstName,
+                LastName = owner.LastName,
+                Pets = owner.Pets.Select(p => new PetVM_v2_0
+                {
+                    PetId = p.Id,
+                    Name = p.Name,
+                    AnimalTypeId = p.FKAnimalTypeId,
+                    AnimalType = p.AnimalType.AnimalType,
+                    FoodSource = p.AnimalType.FoodSource,
+                    OwnerId = p.FKOwnerId,
+                    OwnersName = p.Owner.FullName
+                })
+
+            });
         }
 
         // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862/Pets
         [HttpGet("{id}/pets")]
-        public async Task<ActionResult<tblPet>> GetPetsByOwnerId(Guid id)
+        [ApiVersion("1.0")]
+        public async Task<ActionResult<IEnumerable<PetVM>>> GetPetsByOwnerId(Guid id)
         {
             var pets = await _ownerService.GetPetsAsync(id).ConfigureAwait(false);
 
-            return Ok(pets);
+
+            return Ok(pets.Select(p => new PetVM 
+            { PetId = p.Id,
+                Name = p.Name,
+                AnimalTypeId = p.FKAnimalTypeId,
+                AnimalType = p.AnimalType.AnimalType,
+                OwnerId = id,
+                OwnersName = p.Owner.FullName
+            }));
         }
 
-        // PUT: api/Owners/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
+        // PUT: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOwner(Guid id, tblOwner owner)
+        [ApiVersion("1.0")]
+        public async Task<IActionResult> PutOwner(Guid id, OwnerVM ownerModel)
         {
-            if (owner == null || id != owner.Id)
+            if (ownerModel == null || id != ownerModel.OwnerId)
             {
                 return BadRequest();
             }
-
-            //_context.Entry(owner).State = EntityState.Modified;
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
 
             try
             {
                 //await _context.SaveChangesAsync();
+                await _ownerService.Update(new tblOwner
+                {
+                    Id = id,
+                    FirstName = ownerModel.FirstName,
+                    LastName = ownerModel.LastName
+                });
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,32 +198,58 @@ namespace PetRego.Controllers
         }
 
         // POST: api/Owners
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<tblOwner>> PostOwner(tblOwner owner)
+        [ApiVersion("1.0")]
+        public async Task<ActionResult<tblOwner>> PostOwner([FromBody]OwnerVM owner)
         {
-            //_context.Owners.Add(owner);
-            //await _context.SaveChangesAsync();
+            //Validate model
+            if (owner == null)
+            {
+                return BadRequest("No data provided.");
+            }
 
-            return CreatedAtAction("GettblOwner", new { id = owner.Id }, owner);
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            var createdOwner = await _ownerService.Add(new tblOwner
+            {
+                FirstName = owner.FirstName,
+                LastName = owner.LastName
+            });
+
+            owner.OwnerId = createdOwner.Id;
+            return Ok(owner);
         }
 
-        // DELETE: api/Owners/5
+        // DELETE: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
         [HttpDelete("{id}")]
-        public async Task<ActionResult<tblOwner>> DeleteOwner(Guid id)
+        [ApiVersion("1.0")]
+        public async Task<ActionResult<OwnerVM>> DeleteOwner(Guid id)
         {
-            //var owner = await _ownerService.GetByIdAsync(id).ConfigureAwait(false);
-            //if (owner == null)
-            //{
-            //    return NotFound();
-            //}
-
-            _ownerService.Remove(id);
-            //await _context.SaveChangesAsync();
-
-            //return owner;
-            return Ok();
+            try
+            {
+                var deletedOwner = await _ownerService.Remove(id);
+                return Ok(new OwnerVM
+                {
+                    OwnerId = deletedOwner.Id,
+                    FirstName = deletedOwner.FirstName,
+                    LastName = deletedOwner.LastName
+                });
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
+            {
+                return Problem("Unable to delete owner");
+            }
+            catch (Exception)
+            {
+                return Problem("Unable to delete owner");
+            }
         }
 
         private bool OwnerExists(Guid id)

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using PetRego.DAL;
 using Microsoft.EntityFrameworkCore;
 using PetRego.BLL;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace PetRego
 {
@@ -33,10 +34,19 @@ namespace PetRego
             //TODO: Add default command timeout?
             services.AddDbContext<PetRegoDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IOwnerService, OwnerService>();
+            services.AddScoped<IPetService, PetService>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();
             services.AddScoped<IPetRepository, PetRepository>();
 
-            //services.AddApiVersioning();
+            services.AddApiVersioning(cfg =>
+            {
+                //Start with API version 1.0, and if not specified, assume v1.0 by default.
+                //Also report which api versions are applicable in the response header.
+                cfg.DefaultApiVersion = new ApiVersion(1, 0);
+                cfg.AssumeDefaultVersionWhenUnspecified = true;
+                cfg.ReportApiVersions = true;
+                cfg.ApiVersionReader = new HeaderApiVersionReader("X-Version");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

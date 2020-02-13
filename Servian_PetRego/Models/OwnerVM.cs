@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace PetRego.Models
 {
+    //TODO: Could probably get away with just the one OwnerVM and turn it generic with a TPetVM?
     public class OwnerVM
     {
         public Guid? OwnerId { get; set; } = null;

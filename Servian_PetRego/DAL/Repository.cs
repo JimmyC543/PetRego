@@ -10,48 +10,66 @@ namespace PetRego.DAL
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private readonly DbSet<TEntity> _entities;
+        private readonly DbContext _dbContext;
 
         public Repository(DbContext dbContext)
         {
             //TODO: Null check?
-            _entities = dbContext.Set<TEntity>();
+            if (dbContext == null)
+            {
+                throw new ArgumentNullException(nameof(dbContext));
+            }
+
+            _dbContext = dbContext;
+            //_entities = dbContext.Set<TEntity>();
         }
 
-        public async Task<TEntity> GetByIdAsync(Guid id)
+        public virtual async Task<TEntity> GetByIdAsync(Guid id)
         {
-            return await _entities.FindAsync(id);
+            return await _dbContext.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _entities.ToListAsync().ConfigureAwait(false);
+            return await _dbContext.Set<TEntity>().AsNoTracking().ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _entities.Where(predicate).ToListAsync().ConfigureAwait(false);
+            return await _dbContext.Set<TEntity>().Where(predicate).ToListAsync().ConfigureAwait(false);
         }
 
-        public void Add(TEntity entity)
+        public async Task<TEntity> Add(TEntity entity)
         {
-            _entities.Add(entity);
+            var savedEntity = _dbContext.Set<TEntity>().Add(entity).Entity;
+            await _dbContext.SaveChangesAsync();
+            return savedEntity;
         }
 
-        public void AddRange(IEnumerable<TEntity> entities)
+        public async Task AddRange(IEnumerable<TEntity> entities)
         {
-            _entities.AddRange(entities);
+            _dbContext.Set<TEntity>().AddRange(entities);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public void Update(TEntity entity)
+        {
+            _dbContext.Set<TEntity>().Update(entity);
+            _dbContext.SaveChanges();
         }
 
         public void Remove(TEntity entity)
         {
             //TODO: Add logic to handle "not found" case
-            _entities.Remove(entity);
+            _dbContext.Set<TEntity>().Remove(entity);
+            _dbContext.SaveChanges();
         }
 
         public void RemoveRange(IEnumerable<TEntity> entities)
         {
             //TODO: Add logic to handle "not found" case
-            _entities.RemoveRange(entities);
+            _dbContext.Set<TEntity>().RemoveRange(entities);
+            _dbContext.SaveChanges();
         }
     }
 }

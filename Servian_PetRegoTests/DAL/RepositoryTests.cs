@@ -32,7 +32,7 @@ namespace PetRegoTests.DAL
 
             //Assert
             Assert.Equal(3, result.Count());
-            foreach(tblPet pet in result)
+            foreach (tblPet pet in result)
             {
                 Assert.Contains(pet.Name, pets.Select(x => x.Name));
                 pets.RemoveAll(x => x.Name == pet.Name);//Make sure we're testing a 1-1 match
@@ -58,7 +58,7 @@ namespace PetRegoTests.DAL
             Assert.IsType<tblPet>(result);
 
             // Assert.Equal/True weren't working so just check that all props match the expected value.
-            foreach(var prop in result.GetType().GetProperties())
+            foreach (var prop in result.GetType().GetProperties())
             {
                 Assert.Equal(prop.GetValue(result), prop.GetValue(result));
             }
@@ -83,7 +83,7 @@ namespace PetRegoTests.DAL
             Assert.True(result != null);
             Assert.IsAssignableFrom<IEnumerable<tblPet>>(result);
 
-            foreach(var pet in result)
+            foreach (var pet in result)
             {
                 Assert.Equal(expected.Id, pet.Id);
                 Assert.Equal(expected.Name, pet.Name);
@@ -166,12 +166,8 @@ namespace PetRegoTests.DAL
 
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
-            //Act
-            repo.Remove(fakePet);
-            
-
-            //Assert
-            Assert.Throws<DbUpdateConcurrencyException>(() => { _context.SaveChanges(); });
+            //Act/Assert
+            Assert.Throws<DbUpdateConcurrencyException>(() => { repo.Remove(fakePet); });
         }
 
         [Fact]//TODO: convert to a theory and test with several combinations
@@ -179,12 +175,10 @@ namespace PetRegoTests.DAL
         {
             //Arange
             var petsToRemove = _context.Set<tblPet>().ToList();
-
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act
             repo.RemoveRange(petsToRemove);
-            _context.SaveChanges();
 
             //Assert
             foreach (var entity in petsToRemove)
@@ -193,14 +187,49 @@ namespace PetRegoTests.DAL
             }
         }
 
-        //protected override IEnumerable<tblPet> Sample()
-        //{
-        //    return new[]
-        //    {
-        //        new tblPet { Id=Guid.Parse("b66b7d7b-62b1-4feb-a128-058aa5f99a3f"), Name = "Mittens" },
-        //        new tblPet { Id=Guid.Parse("1390599d-3e45-48e0-87ba-a09f578b4f7b"), Name = "Rex" },
-        //        new tblPet { Id=Guid.Parse("4b34cc1d-737f-4bc0-a6c4-9a7b1c3541b0"), Name = "Spot" }
-        //    };
-        //}
+
+        [Theory]
+        [InlineData("a8eab20c-55bd-4526-a162-2ff8959b8862", "Tom", "Jones")]
+        public void Update_Test_ShouldSucceed_WhenEntityExists(string id, string firstName, string lastName)
+        {
+            //Arrange
+            Guid guid = Guid.Parse(id);
+            var existingOwners = _context.Set<tblOwner>().ToList();
+
+            var oldOwner = _context.Set<tblOwner>().FirstOrDefault(x => x.Id == guid);
+            oldOwner.FirstName = firstName;
+            oldOwner.LastName = lastName;
+            var oldData = new tblOwner { Id = guid, FirstName = "Brian", LastName = "Lara" };
+            var newData = new tblOwner { Id = guid, FirstName = firstName, LastName = lastName };
+            Repository<tblOwner> ownerRepo = new Repository<tblOwner>(_context);
+
+            //Act
+            ownerRepo.Update(oldOwner);
+            var result = _context.Set<tblOwner>().FirstOrDefault(x => x.Id == guid);
+
+            //Assert
+            Assert.Equal(firstName, result.FirstName);
+            Assert.Equal(lastName, result.LastName);
+        }
+
+
+        [Theory]
+        [InlineData("a8eab20c-55bd-4526-a162-2ff8959b8862", "Tom", "Jones")]
+        public void Update_Test_ShouldFail_WhenWasntFetchedFromDb(string id, string firstName, string lastName)
+        {
+            //Arrange
+            Guid guid = Guid.Parse(id);
+            var existingOwners = _context.Set<tblOwner>().ToList();
+
+            var oldOwner = _context.Set<tblOwner>().FirstOrDefault(x => x.Id == guid);
+            oldOwner.FirstName = firstName;
+            oldOwner.LastName = lastName;
+            var newData = new tblOwner { Id = guid, FirstName = firstName, LastName = lastName };
+            Repository<tblOwner> ownerRepo = new Repository<tblOwner>(_context);
+
+            //Act/Assert
+            Assert.Throws<InvalidOperationException>(() => ownerRepo.Update(newData));
+        }
+
     }
 }

@@ -16,10 +16,25 @@ namespace PetRego.DAL
             _dbContext = context;
         }
 
+
+        public override async Task<IEnumerable<tblOwner>> GetAllAsync()
+        {
+            return await _dbContext.Owners
+                .Include(o => o.Pets)
+                .ThenInclude(p => p.AnimalType)
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
         //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
         public async Task<IEnumerable<tblPet>> GetPetsByOwnerIdAsync(Guid id)
         {
-            return (await _dbContext.Owners.FirstOrDefaultAsync(owner => owner.Id == id).ConfigureAwait(false))?.Pets ?? new List<tblPet>();
+            return (await _dbContext.Owners
+                .Include(nameof(tblOwner.Pets))
+                .Include(nameof(tblPet.AnimalType))
+                .FirstOrDefaultAsync(owner => owner.Id == id)
+                .ConfigureAwait(false))
+                ?.Pets ?? new List<tblPet>();
         }
     }
 }

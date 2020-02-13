@@ -18,7 +18,18 @@ namespace PetRego.DAL
         //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
         public async Task<tblOwner> GetOwnerByPetIdAsync(Guid petId)
         {
-            return (await _dbContext.Pets.FirstOrDefaultAsync(pet => pet.Id == petId))?.Owner;
+            return (await _dbContext.Pets
+                .Include(nameof(tblPet.Owner))
+                .FirstOrDefaultAsync(pet => pet.Id == petId))
+                ?.Owner;
+        }
+
+        public async override Task<tblPet> GetByIdAsync(Guid petId)
+        {
+            return await _dbContext.Pets
+                .Include(nameof(tblPet.Owner))
+                .Include(nameof(tblPet.AnimalType))
+                .FirstOrDefaultAsync(pet => pet.Id == petId);
         }
     }
 }

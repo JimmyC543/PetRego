@@ -15,7 +15,6 @@ namespace PetRego.DAL
             _dbContext = context;
         }
 
-        //Futures: This potentially belongs in the Business Layer, along with additional validation (etc) logic
         public async Task<tblOwner> GetOwnerByPetIdAsync(Guid petId)
         {
             return (await _dbContext.Pets

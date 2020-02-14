@@ -10,18 +10,11 @@ namespace PetRego.DAL
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly DbSet<TEntity> _entities;
         private readonly DbContext _dbContext;
 
         public Repository(DbContext dbContext)
         {
-            //TODO: Null check?
-            if (dbContext == null)
-            {
-                throw new ArgumentNullException(nameof(dbContext));
-            }
-
-            _dbContext = dbContext;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public virtual async Task<TEntity> GetByIdAsync(Guid id)
@@ -67,7 +60,6 @@ namespace PetRego.DAL
 
         public async Task RemoveRange(IEnumerable<TEntity> entities)
         {
-            //TODO: Add logic to handle "not found" case
             _dbContext.Set<TEntity>().RemoveRange(entities);
             await _dbContext.SaveChangesAsync();
         }

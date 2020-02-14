@@ -41,7 +41,7 @@ namespace PetRego.Controllers
             }));
         }
         [HttpGet]
-        [ApiVersion("2.0")]
+        [ApiVersion("2.0")] //Requires header "X-Version" to be 2.0 in the request.
         public async Task<ActionResult<IEnumerable<PetVM_v2_0>>> GetPets_v2_0()
         {
             var entities = await _petService.GetAllAsync();
@@ -82,7 +82,7 @@ namespace PetRego.Controllers
 
         // GET: api/Pets/60eca81b-6d1d-4d10-feec-08d7af75b053
         [HttpGet("{id}")]
-        [ApiVersion("2.0")]//use header "X-Version": 2.0
+        [ApiVersion("2.0")] //Requires header "X-Version" to be 2.0 in the request.
         public async Task<ActionResult<PetVM_v2_0>> GetPet_v2_0(Guid id)
         {
             var entity = await _petService.GetByIdAsync(id);
@@ -212,7 +212,23 @@ namespace PetRego.Controllers
         [ApiVersion("1.0")]
         public async Task<ActionResult> DeletePet(Guid id)
         {
-            return Ok(await _petService.Remove(id));
+            try
+            {
+                var result = await _petService.Remove(id);
+                return Ok(result);
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Problem($"Unable to delete pet with id: {id}.");
+            }
+            catch (Exception)
+            {
+                return Problem($"A problem occurred while processing your request.");
+            }
         }
 
         private async Task<bool> PetExists(Guid id)

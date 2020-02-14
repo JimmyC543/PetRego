@@ -296,7 +296,7 @@ namespace PetRegoTests.BLL
             var result = _service.Remove(ownerGuid);
 
             //Assert
-            _mockOwnerRepository.Verify(x => x.Remove(ownerGuid), Times.Once());
+            _mockOwnerRepository.Verify(x => x.Remove(existingOwner), Times.Once());
             Assert.True(result.IsCompletedSuccessfully);
         }
 
@@ -317,7 +317,7 @@ namespace PetRegoTests.BLL
             //Assert
             Assert.ThrowsAnyAsync<InvalidOperationException>(() => task);
             _mockPetRepository.Verify(x => x.RemoveRange(It.IsAny<IEnumerable<tblPet>>()), Times.Never());
-            _mockOwnerRepository.Verify(x => x.Remove(It.IsAny<Guid>()), Times.Once());
+            _mockOwnerRepository.Verify(x => x.Remove(It.IsAny<tblOwner>()), Times.Never());
         }
 
         #endregion

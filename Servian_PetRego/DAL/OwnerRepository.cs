@@ -44,15 +44,9 @@ namespace PetRego.DAL
                 .ConfigureAwait(false))
                 ?.Pets ?? new List<tblPet>();
         }
-        public override async Task<tblOwner> Remove(Guid id)
+
+        public override async Task<tblOwner> Remove(tblOwner entity)
         {
-            var entity = await _dbContext.Set<tblOwner>().FindAsync(id);
-            if (entity == null)
-            {
-                return null;
-            }
-            await _dbContext.Entry(entity).Collection(o => o.Pets).LoadAsync();
-            _dbContext.Set<tblPet>().RemoveRange(entity.Pets);
             _dbContext.Set<tblOwner>().Remove(entity);
             await _dbContext.SaveChangesAsync();
 

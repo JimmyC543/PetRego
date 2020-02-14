@@ -174,7 +174,7 @@ namespace PetRegoTests.DAL
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act
-            repo.Remove(petToRemove.Id);
+            repo.Remove(petToRemove);
             _context.SaveChanges();
 
             //Assert
@@ -190,7 +190,7 @@ namespace PetRegoTests.DAL
             Repository<tblPet> repo = new Repository<tblPet>(_context);
 
             //Act/Assert
-            Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => repo.Remove(fakePet.Id));
+            Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => repo.Remove(fakePet));
         }
 
         [Fact]//TODO: convert to a theory and test with several combinations
@@ -251,7 +251,7 @@ namespace PetRegoTests.DAL
             Repository<tblOwner> ownerRepo = new Repository<tblOwner>(_context);
 
             //Act/Assert
-            Assert.Throws<InvalidOperationException>(() => ownerRepo.Update(newData));
+            Assert.ThrowsAsync<InvalidOperationException>(() => ownerRepo.Update(newData));
         }
 
     }

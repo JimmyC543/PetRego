@@ -13,8 +13,8 @@ namespace PetRego.DAL
         public Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         public Task<T> Add(T entity);
         public Task AddRange(IEnumerable<T> entities);
-        public void Update(T entity);
-        public Task<T> Remove(Guid id);
+        public Task Update(T entity);
+        public Task<T> Remove(T entity);
         public Task RemoveRange(IEnumerable<T> entities);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using PetRego.DAL;
 using PetRego.DAL.DataModels;
+using PetRego.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,7 +78,12 @@ namespace PetRego.BLL
 
         public async Task<tblPet> Remove(Guid id)
         {
-            return await _petRepository.Remove(id);
+            var entity = await _petRepository.GetByIdAsync(id);
+            if (entity == null)
+            {
+                throw new EntityNotFoundException("Could not find pet to delete");
+            }
+            return await _petRepository.Remove(entity);
         }
 
         public async Task RemoveRange(IEnumerable<Guid> ids)

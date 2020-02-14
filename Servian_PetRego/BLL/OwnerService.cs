@@ -71,7 +71,7 @@ namespace PetRego.BLL
                 throw new EntityNotFoundException($"Could not find owner with id {owner.Id}");
             };
 
-            _ownerRepository.Update(owner);
+            await _ownerRepository.Update(owner);
         }
 
         public async Task<tblOwner> Remove(Guid id)
@@ -80,8 +80,14 @@ namespace PetRego.BLL
             {
                 throw new ArgumentNullException("Cannot remove blank entity");
             }
-
-            return await _ownerRepository.Remove(id);
+            var owner = await _ownerRepository.GetByIdAsync(id);
+            if (owner == null)
+            {
+                throw new EntityNotFoundException("Could not find owner to delete");
+            }
+            await _petRepository.RemoveRange(owner.Pets);
+            await _ownerRepository.Remove(owner);
+            return owner;
         }
 
         public async Task RemoveRange(IEnumerable<Guid> ids)
@@ -99,8 +105,8 @@ namespace PetRego.BLL
             }
 
             //TODO: Wrap in a try/catch and rollback if either step fails.
-            _petRepository.RemoveRange(await _petRepository.FindAsync(p => ids.Contains(p.FKOwnerId.Value)));
-            _ownerRepository.RemoveRange(entitiesToRemove);
+            await _petRepository.RemoveRange(await _petRepository.FindAsync(p => ids.Contains(p.FKOwnerId.Value)));
+            await _ownerRepository.RemoveRange(entitiesToRemove);
         }
     }
 }

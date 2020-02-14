@@ -52,20 +52,14 @@ namespace PetRego.DAL
             await _dbContext.SaveChangesAsync();
         }
 
-        public void Update(TEntity entity)
+        public async Task Update(TEntity entity)
         {
             _dbContext.Set<TEntity>().Update(entity);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
-        public virtual async Task<TEntity> Remove(Guid id)
+        public virtual async Task<TEntity> Remove(TEntity entity)
         {
-            //TODO: Add logic to handle "not found" case
-            TEntity entity = await _dbContext.Set<TEntity>().FindAsync(id);
-            if (entity == null)
-            {
-                throw new EntityNotFoundException("Cannot remove record, as it doesn't exist.");
-            }
             _dbContext.Set<TEntity>().Remove(entity);
             await _dbContext.SaveChangesAsync();
             return entity;

@@ -321,7 +321,7 @@ namespace PetRegoTests.BLL
             var result = _service.Remove(petGuid);
 
             //Assert
-            _mockPetRepository.Verify(x => x.Remove(petGuid), Times.Once());
+            _mockPetRepository.Verify(x => x.Remove(existingPet), Times.Once());
             Assert.True(result.IsCompletedSuccessfully);
         }
 
@@ -340,8 +340,8 @@ namespace PetRegoTests.BLL
             var task = _service.Remove(guid);
 
             //Assert
-            _mockPetRepository.Verify(x => x.Remove(It.IsAny<Guid>()), Times.Once());
             Assert.ThrowsAnyAsync<InvalidOperationException>(() => task);
+            _mockPetRepository.Verify(x => x.Remove(It.IsAny<tblPet>()), Times.Never());
         }
 
         #endregion

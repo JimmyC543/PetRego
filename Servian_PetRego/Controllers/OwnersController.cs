@@ -153,6 +153,23 @@ namespace PetRego.Controllers
                 OwnersName = p.Owner.FullName
             }));
         }
+        // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862/Pets
+        [HttpGet("{id}/pets")]
+        [ApiVersion("2.0")]
+        public async Task<ActionResult<IEnumerable<PetVM_v2_0>>> GetPetsByOwnerId_v2_0(Guid id)
+        {
+            var pets = await _ownerService.GetPetsAsync(id).ConfigureAwait(false);
+
+            return Ok(pets.Select(p => new PetVM_v2_0 
+            { PetId = p.Id,
+                Name = p.Name,
+                AnimalTypeId = p.FKAnimalTypeId,
+                AnimalType = p.AnimalType.AnimalType,
+                FoodSource = p.AnimalType.FoodSource,
+                OwnerId = id,
+                OwnersName = p.Owner.FullName
+            }));
+        }
 
         // PUT: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
         [HttpPut("{id}")]

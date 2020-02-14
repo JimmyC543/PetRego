@@ -93,14 +93,16 @@ namespace PetRego.BLL
                 return;
             }
 
-            var entitiesToRemove = await _petRepository.FindAsync(x => ids.Contains(x.Id)).ConfigureAwait(false);
+            //Just in case there are duplicate ids sent in the request, we're only interested in the unique ones
+            var uniqueIds = ids.Distinct();
+            var entitiesToRemove = await _petRepository.FindAsync(x => uniqueIds.Contains(x.Id)).ConfigureAwait(false);
 
-            if (entitiesToRemove.Count() != ids.Count())
+            if (entitiesToRemove.Count() != uniqueIds.Count())
             {
                 throw new InvalidOperationException("Can't remove all of the pets; at least one does not exist.");
             }
 
-            _petRepository.RemoveRange(entitiesToRemove);
+            await _petRepository.RemoveRange(entitiesToRemove);
         }
     }
 }

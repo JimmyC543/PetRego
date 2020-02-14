@@ -107,7 +107,7 @@ namespace PetRego.Controllers
         }
         // GET: api/Owners/a8eab20c-55bd-4526-a162-2ff8959b8862
         [HttpGet("{id}")]
-        [ApiVersion("2.0")]
+        [ApiVersion("2.0")] //Requires header "X-Version" to be "2.0" in the request.
         public async Task<ActionResult<OwnerVM_v2_0>> GetOwner_v2_0(Guid id)
         {
             var owner = await _ownerService.GetByIdAsync(id).ConfigureAwait(false);
@@ -244,11 +244,11 @@ namespace PetRego.Controllers
             }
             catch (ArgumentException)
             {
-                return Problem("Unable to delete owner");
+                return Problem($"Unable to delete owner with id: {id}");
             }
             catch (Exception)
             {
-                return Problem("Unable to delete owner");
+                return Problem("A problem occurred while processing your request.");
             }
         }
 
